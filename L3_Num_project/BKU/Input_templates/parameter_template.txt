@@ -1,0 +1,6 @@
+## Crowd simulation parameters used by the solver ##
+
+0.3	# Mean radius of the agents
+1.8	# Mean Velocity of the agents
+0.05	# Standard deviation between agents
+-1      # Maximun number of iterartions ( set to infinity if negatif)
