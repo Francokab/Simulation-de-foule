@@ -1,0 +1,19 @@
+
+
+#goal and its number
+
+# 	- Points	formart : xg,yg
+#	- Segments	formart : xg1,yg1 xg2,yg2
+
+
+0,1
+0,2 3,4
+5,4
+random 2
+2,5 5,3 3 0,1
+8,3 9,6 7 0,2
+manual 1
+5,2 0,1,2
+5,3 1,2
+5,4 0,1
+5,5 0,2
