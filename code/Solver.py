@@ -95,6 +95,20 @@ def wall_repulsion_Force(pos_agent,wall):
     
     return -10*exp(-d_w/0.2)*e_w # Model from Helbing & Molnar 1998
 
+##############################################################################
+#########################     Augular dependence       #######################
+##############################################################################
+
+def angular_dependence(pos_agent_i,pos_agent_j,velocity_agent_i):
+    v_a = norm(velocity_agent_i)
+    e_j = vect(pos_agent_i,pos_agent_j)/dist_point(pos_agent_i,pos_agent_j)
+    x = velocity_agent_i/v_a
+    cos_angle=dot((velocity_agent_i/v_a),e_j)
+    
+    lb= 0.1 #Model from Helbing & Molnar 1998
+    angular_dependent_prefactor = (lb + (1 - lb)*(1+cos_angle)/2) #Model from Helbing & Molnar 1998
+    return angular_dependent_prefactor
+
 ##################
 
 
@@ -163,11 +177,15 @@ def run_script(input_files_name = input_files_name_test,\
                F_agents=zeros(2)
                for j in range(N_agents):
                    if i!=j and abs(sum(Checkpoints[j]))<len(goals) :
-                       # only the active agents are taken into account
-                       F_agents+=agent_repulsion_Force(Position[i],\
-                                                       Position[j],\
-                                                       Velocity[j],\
-                                                       t_step    )
+                      # only the active agents are taken into account
+                      if time_step_counter == 1:
+                        prefactor = 1
+                      else:
+                        prefactor=angular_dependence(Position[i],Position[j],Velocity[i])
+                      F_agents+=prefactor*agent_repulsion_Force(Position[i],\
+                                                                Position[j],\
+                                                                Velocity[j],\
+                                                                t_step    )
                # Direction Force :
                F_goal=zeros(2)
                # finding the current goal of agent i
@@ -228,6 +246,8 @@ def run_script(input_files_name = input_files_name_test,\
                     time_step_counter+1,output_file_name)
     print('-- Simulation completed')
     return None
+
+
 
 run_script()
 Anim.load_output()
