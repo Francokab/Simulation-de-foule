@@ -122,7 +122,7 @@ class read :
                 Man_goals.append(g)
                 i += 1
 
-        N_agents = int(sum(Box_agents) + len(Man_Position))
+        N_agents = int(sum(Box_agents) + len(Man_Position)) #The total number of agents
         
         # Create the position of the agents
         Positions = zeros( (N_agents,2) )
@@ -133,21 +133,20 @@ class read :
             y_max = max(Box_corner[i][0][1],Box_corner[i][1][1])
             y_min = min(Box_corner[i][0][1],Box_corner[i][1][1])
             
-            ## Randomly feel the array 
+            ## Randomly fill the array 
             for j in range(Box_agents[i]): 
                 x = random.uniform(x_min, x_max)
                 y = random.uniform(y_min, y_max)
                 Positions[incr+j] = array([x, y])
             incr += Box_agents[i]
-        
+        ## fill the last position with the manual ones
         for i in range(len(Man_Position)):
             Positions[incr+i] = array(Man_Position[i])
             
-        #here, we know all the positions of the agents and their goals
-        
+        # we create the Array of the current goals to acheive for each agents
         Checkpoints = ones((N_agents,len(goals)))
         other_incr=0
-        for i in range(len(Box_goals)): #first we do it for the random part, according to the creation of Positions
+        for i in range(len(Box_goals)): #first we do it for the random part
             series_of_goals=Box_goals[i]
             for h in range(Box_agents[i]):   
                 for j in range(len(series_of_goals)):

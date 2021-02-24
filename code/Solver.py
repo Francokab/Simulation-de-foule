@@ -226,7 +226,7 @@ def run_script(input_files_name = input_files_name_test,\
     for i in range(N_agents):
         output.white_output(i,Position[i],Velocity[i], \
                     time_step_counter+1,output_file_name)
-    print('-- Simulation complited')
+    print('-- Simulation completed')
     return None
 
 run_script()
