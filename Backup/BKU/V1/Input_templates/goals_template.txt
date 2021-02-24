@@ -1,0 +1,11 @@
+## Position of the goalss ##
+#
+######
+# There are two types of goals :
+# 	- Points	formart : xg,yg
+#	- Segments	formart : xg1,yg1 xg2,yg2
+######
+#
+# Goals :
+0,0.8 0,-0.8
+-3,0
