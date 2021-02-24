@@ -15,7 +15,8 @@ input_folder = 'Input_test/'
 input_files_name_test = [input_folder+'parameter_template.txt',\
                          input_folder+'agents_positions_template.txt',\
                           input_folder+'walls_positions_template.txt',\
-                          input_folder+'goals_template.txt'   ]
+                          input_folder+'goals_template.txt'  ,\
+                          input_folder+'group_template.txt' ]
 output_file_name_test = input_folder+'case_output.txt'
 
 default_save_name = input_folder+'anim_test.gif'
