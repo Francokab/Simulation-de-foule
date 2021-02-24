@@ -11,11 +11,9 @@ from in_out_class import read
 ##############################################################################
 ############################     Parameters     ##############################
 ##############################################################################
-input_folder = 'Input_test/'
+input_folder = 'Input_template/'
 input_files_name_test = [input_folder+'parameter_template.txt',\
-                         input_folder+'agents_positions_template.txt',\
                           input_folder+'walls_positions_template.txt',\
-                          input_folder+'goals_template.txt'  ,\
                           input_folder+'group_template.txt' ]
 output_file_name_test = input_folder+'case_output.txt'
 
@@ -67,8 +65,8 @@ def create_animation(save_name = default_save_name ,
                     output_file_name = output_file_name_test):
     
     # Get useful values :
-    Walls = read.read_walls_positions(input_files_name[2])
-    Goals = read.read_group(input_files_name[4])[1]
+    Walls = read.read_walls_positions(input_files_name[1])
+    Goals = read.read_group(input_files_name[2])[1]
     dt, Positions, Velocities = load_output(output_file_name)
     N_agents = len(Positions[0]) # Number of agents
     N_frames = len(Positions) # Number of frame to animate
