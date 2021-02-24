@@ -12,7 +12,8 @@ input_folder = 'Input_test/'
 input_files_name_test = [input_folder+'parameter_template.txt',\
                          input_folder+'agents_positions_template.txt',\
                           input_folder+'walls_positions_template.txt',\
-                          input_folder+'goals_template.txt'   ]
+                          input_folder+'goals_template.txt'   ,\
+                          input_folder+'group_template.txt']
 output_file_name_test = input_folder+'case_output.txt'
 
 
@@ -115,10 +116,10 @@ def run_script(input_files_name = input_files_name_test,\
     ## Read the input file (not done yet)
     mean_radius,mean_velocity,std,max_it = \
         read.read_parameters(input_files_name[0])
-    Position, goals, Checkpoints = read.read_group("Input_test/group_template.txt")
-    Position = read.read_agents_positions(input_files_name[1])
+    Position, goals, Checkpoints = read.read_group(input_files_name[4])
+    # Position = read.read_agents_positions(input_files_name[1])
     walls = read.read_walls_positions(input_files_name[2])
-    goals = read.read_goals(input_files_name[3])
+    # goals = read.read_goals(input_files_name[3])
     print('-- input successfuly read')
           
     ## Initialise with the variables read before
@@ -128,7 +129,7 @@ def run_script(input_files_name = input_files_name_test,\
     V_max = random.normal(loc=mean_velocity, scale=std, size=N_agents)
     Radius = random.normal(loc=mean_radius, scale=std, size=N_agents)
     Velocity = zeros((N_agents,2)) # Array of the velocities
-    Checkpoints = zeros((N_agents,len(goals))) # Array of the current goals
+    # Checkpoints = zeros((N_agents,len(goals))) # Array of the current goals
     UP_Velocity=Velocity # Velocity at time t+dt
     UP_Position=Position # Position at time t+dt
     

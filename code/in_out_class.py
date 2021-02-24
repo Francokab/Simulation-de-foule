@@ -119,7 +119,7 @@ class read :
 
     def read_group(group_file_name):
         file = open(group_file_name,'r')
-        diff_group = file.readlines()[8 :]
+        diff_group = file.readlines()[16 :]
         goals = []
         i = 0
         while diff_group[i].strip().split()[0] != "random" and diff_group[i].strip().split()[0] != "manual":
@@ -147,20 +147,24 @@ class read :
         #print(diff_group[i]) test to read the last line
         if diff_group[i].strip().split()[0] == "random":
             i += 1
-            while diff_group[i].strip().split()[0] != "manual" and i != len(diff_group):
-                raw_seg = (diff_group[i].strip()).split(' ')
-                x1,y1 = raw_seg[0].split(',')
-                x2,y2 = raw_seg[1].split(',')
-                N1 = raw_seg[2]
-                g = raw_seg[3].split(',')
-                for j in range(len(g)):
-                    g[j] = int(g[j])
-                Box_corner.append( [[float(x1),float(y1)] , [float(x2),float(y2)] ])
-                Box_agents.append(int(N1))
-                Box_goals.append(g)
-                i += 1
+            switch_to_manual = False
+            while i != len(diff_group) and not switch_to_manual :
+                if diff_group[i].strip().split()[0] == "manual":
+                    switch_to_manual = True
+                else:
+                    raw_seg = (diff_group[i].strip()).split(' ')
+                    x1,y1 = raw_seg[0].split(',')
+                    x2,y2 = raw_seg[1].split(',')
+                    N1 = raw_seg[2]
+                    g = raw_seg[3].split(',')
+                    for j in range(len(g)):
+                        g[j] = int(g[j])
+                    Box_corner.append( [[float(x1),float(y1)] , [float(x2),float(y2)] ])
+                    Box_agents.append(int(N1))
+                    Box_goals.append(g)
+                    i += 1
 
-        if diff_group[i].strip().split()[0] == "manual":
+        if switch_to_manual:
             i += 1
             while i != len(diff_group):
                 raw_seg = (diff_group[i].strip()).split(' ')

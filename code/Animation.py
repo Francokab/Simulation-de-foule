@@ -67,7 +67,7 @@ def create_animation(save_name = default_save_name ,
     
     # Get useful values :
     Walls = read.read_walls_positions(input_files_name[2])
-    Goals = read.read_goals(input_files_name[3])
+    Goals = read.read_group(input_files_name[4])[1]
     dt, Positions, Velocities = load_output(output_file_name)
     N_agents = len(Positions[0]) # Number of agents
     N_frames = len(Positions) # Number of frame to animate
