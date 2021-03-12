@@ -95,6 +95,20 @@ def wall_repulsion_Force(pos_agent,wall):
     
     return -10*exp(-d_w/0.2)*e_w # Model from Helbing & Molnar 1998
 
+def force_power_law(x_i,x_j,v_i,v_j,Ri,Rj,tho_0,k):
+    xij=vect(x_j,x_i)
+    vij=vect(v_j,v_i)
+    a=norm(vij)**2
+    b=-dot(xij,vij)
+    c=norm(xij)**2-(Ri+Rj)**2
+    d=b**2-(a*c)
+    tho=(b-sqrt(d))/a
+    if tho > 0:
+      Fij=-((k*exp(-tho/tho_0)/(a*tho**2))*((2/tho)+(1/tho_0)))*(vij-(a*xij+b*vij)/sqrt(d))
+    else:
+      Fij=zeros(2)
+    return Fij
+
 ##############################################################################
 #########################     Augular dependence       #######################
 ##############################################################################
@@ -119,8 +133,7 @@ def angular_dependence(pos_agent_i,pos_agent_j,velocity_agent_i):
 #                                                                            #
 #                                                                            #
 ##############################################################################
-def run_script(input_files_name = input_files_name_test,\
-        output_file_name = output_file_name_test):
+def run_social_force(input_files_name = input_files_name_test,output_file_name = output_file_name_test):
     
     ''' Run the script defined by the input files selected and create an output
      file with the selected name.'''
@@ -138,7 +151,7 @@ def run_script(input_files_name = input_files_name_test,\
     t_step = 0.3*(mean_radius/mean_velocity) # CFL criteria besed time step 
     V_max = random.normal(loc=mean_velocity, scale=std, size=N_agents)
     Radius = random.normal(loc=mean_radius, scale=std, size=N_agents)
-    Velocity = zeros((N_agents,2)) # Array of the velocities
+    Velocity = random.rand(N_agents,2) # Array of the velocities
     UP_Velocity=Velocity # Velocity at time t+dt
     UP_Position=Position # Position at time t+dt
     
@@ -247,9 +260,133 @@ def run_script(input_files_name = input_files_name_test,\
     print('-- Simulation completed')
     return None
 
+def run_power_law(input_files_name = input_files_name_test,output_file_name = output_file_name_test):
+    
+    ''' Run the script defined by the input files selected and create an output
+     file with the selected name.'''
+    
+    ## Read the input file (not done yet)
+    mean_radius,mean_velocity,std,max_it,k,tho_0 = \
+        read.read_parameters(input_files_name[0])
+    Position, goals, Checkpoints = read.read_group(input_files_name[2]) # Checkpoints is the Array of the current goals
+    walls = read.read_walls_positions(input_files_name[1])
+    print('-- input successfuly read')
+          
+    ## Initialise with the variables read before
+    N_agents = len(Position)
+    N_walls = len(walls)
+    t_step = 0.3*(mean_radius/mean_velocity) # CFL criteria besed time step 
+    V_max = random.normal(loc=mean_velocity, scale=std, size=N_agents)
+    Radius = random.normal(loc=mean_radius, scale=std, size=N_agents)
+    Velocity = random.rand(N_agents,2) # Array of the velocities
+    UP_Velocity=Velocity # Velocity at time t+dt
+    UP_Position=Position # Position at time t+dt
+    
+    ## Create an output file :
+    output.create_output_file(output_file_name)
+    output.line_output('timestep  = '+str(t_step)+' [s] \n',output_file_name)
+    ## Write the initial position and Velocity
+    for i in range(N_agents):
+        output.white_output(i,Position[i],Velocity[i], \
+                0,output_file_name)
+    
+    ## Begin simulation
+    time_step_counter=0
+    while abs(sum(Checkpoints))!=len(Checkpoints.flatten()) :
+     ## Whilee all the agents havent reach all their goals
+        time_step_counter+=1
+        if max_it > 0 : 
+            if time_step_counter >= max_it :
+                #if the maximal number of iteration is reached then the sim is 
+                # artificialy terminated by setting all the check points to 1
+                Checkpoints = ones((N_agents,len(goals)))
+                print('-- Maximal number of iterations reached')
+        ## Agent loop :
+        for i in range(N_agents) :
+            if abs(sum(Checkpoints[i]))<len(goals) :
+                
+                # If the agents haven't reach all his goals yet
+             
+               # Compute the Forces acting on agent i
+               # Wall loop :
+               F_wall=zeros(2)
+               for w in range(N_walls):
+                   F_wall+=wall_repulsion_Force(Position[i],walls[w])
+             
+               # Other agents loop :
+               F_agents=zeros(2)
+               for j in range(N_agents):
+                   if i!=j and abs(sum(Checkpoints[j]))<len(goals) :
+                      # only the active agents are taken into account
+                      if time_step_counter == 1:
+                        prefactor = 1
+                      else:
+                        # prefactor=angular_dependence(Position[i],Position[j],Velocity[i])
+                        prefactor = 1
+                      F_agents+=prefactor*force_power_law(Position[i],Position[j],Velocity[i],Velocity[j],Radius[i],Radius[j],tho_0,k)
+               # Direction Force :
+               F_goal=zeros(2)
+               # finding the current goal of agent i
+               g=0
+               while Checkpoints[i,g]>0:
+                   g+=1
+               F_goal=direction_Force(V_max[i],Position[i],\
+                                      Velocity[i],goals[g])
+        
+        
+               ## The velocity of agent i is updated :
+               #  Folowing the steps described in Helbing & Molnar 1998
+               w_up=Velocity[i]+(t_step)*(F_wall+F_agents+F_goal)
+    
+               if norm(w_up)<=V_max[i]:
+                   UP_Velocity[i]=w_up
+               else :
+                   UP_Velocity[i]=(V_max[i]/norm(w_up))*w_up
+               # Position and velocity are updated :
+               
+               UP_Position[i] = Position[i] + UP_Velocity[i]*t_step
+               
+            
+            
+               ## Check if the agents have reached its current goal:
+               if len(array(goals[g]).flatten())>2:
+               # if the goal is a segment
+                   if dist_point(UP_Position[i], closest_point_seg(goals[g][0],\
+                                                             goals[g][1],\
+                                                            UP_Position[i] )) \
+                   <=Radius[i]:
+                    # if the agent touch the goal :
+                        Checkpoints[i,g]=1
+                        print('Agent '+str(i)+' reached goal '+str(g))
+               else :
+               # if the goal is a dot:
+                  if dist_point(UP_Position[i], goals[g])<=Radius[i]:
+                      Checkpoints[i,g]=1
+                      print('Agent '+str(i)+' reached goal '+str(g))
+                      
+                      
+          ### If the agents have reached all its goals then it stops
+            else:
+                UP_Velocity[i] = zeros(2)
+      
+        ### Position and velocity of all agents are exported
+            output.white_output(i,UP_Position[i],UP_Velocity[i], \
+                                time_step_counter,output_file_name)
+                
+        #### Position and Velocity are Updated
+        Velocity=UP_Velocity
+        Position=UP_Position
+    
+    ### Final Position output :
+    Velocity = zeros((N_agents,2)) # No agents is moving anymore
+    for i in range(N_agents):
+        output.white_output(i,Position[i],Velocity[i], \
+                    time_step_counter+1,output_file_name)
+    print('-- Simulation completed')
+    return None
 
 
-run_script()
+run_power_law()
 Anim.load_output()
 Anim.create_animation()
     
