@@ -151,6 +151,7 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
     t_step = 0.3*(mean_radius/mean_velocity) # CFL criteria besed time step 
     V_max = random.normal(loc=mean_velocity, scale=std, size=N_agents)
     Radius = random.normal(loc=mean_radius, scale=std, size=N_agents)
+    #Checkpoints = zeros((N_agents,len(goals)))
     Velocity = random.rand(N_agents,2) # Array of the velocities
     UP_Velocity=Velocity # Velocity at time t+dt
     UP_Position=Position # Position at time t+dt
@@ -158,7 +159,7 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
     ## Create an output file :
     output.create_output_file(output_file_name)
     output.line_output('timestep  = '+str(t_step)+' [s] \n',output_file_name)
-    ## Write the initial position and Velocity
+    ## Write the initial pos tion and Velocity
     for i in range(N_agents):
         output.white_output(i,Position[i],Velocity[i], \
                 0,output_file_name)
@@ -386,7 +387,7 @@ def run_power_law(input_files_name = input_files_name_test,output_file_name = ou
     return None
 
 
-run_power_law()
+run_social_force()
 Anim.load_output()
 Anim.create_animation()
     
