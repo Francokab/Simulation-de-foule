@@ -13,7 +13,7 @@ input_files_name_test = [input_folder+'parameter_template.txt',\
                           input_folder+'walls_positions_template.txt',\
                           input_folder+'group_template.txt']
 output_file_name_test = input_folder+'case_output.txt'
-
+scalar_output_name_test = input_folder+'scalar_output.txt'
 
 
 
@@ -158,7 +158,7 @@ def angular_dependence(pos_agent_i,pos_agent_j,velocity_agent_i):
 #                                                                            #
 #                                                                            #
 ##############################################################################
-def run_social_force(input_files_name = input_files_name_test,output_file_name = output_file_name_test):
+def run_social_force(input_files_name = input_files_name_test,output_file_name = output_file_name_test,scalar_output_name = scalar_output_name_test):
     
     ''' Run the script defined by the input files selected and create an output
      file with the selected name.'''
@@ -180,6 +180,8 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
     Velocity = random.rand(N_agents,2) # Array of the velocities
     UP_Velocity=Velocity # Velocity at time t+dt
     UP_Position=Position # Position at time t+dt
+    Density=0
+    norm_v=[]
     
     ## Create an output file :
     output.create_output_file(output_file_name)
@@ -279,10 +281,22 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
             else:
                 UP_Velocity[i] = zeros(2)
       
+          ### if the agent is into the box for the density
+            if (Position[i,0] >= 4 and Position[i,0] <= 8 and Position[i,1] >= -4 and Position[i,1] <= 0):
+                Density+=1
+                
+          ### determine the norm of velocity for each agent
+            norm_v.append(norm(Velocity[i]))
+      
         ### Position and velocity of all agents are exported
             output.white_output(i,UP_Position[i],UP_Velocity[i], \
                                 time_step_counter,output_file_name)
-                
+        
+        ### We want the density and the mean velocity
+        mean_velocity=mean(norm_v)
+        output.scalar_output(mean_velocity,Density,scalar_output_name)
+        Density=0
+                                      
         #### Position and Velocity are Updated
         Velocity=UP_Velocity
         Position=UP_Position

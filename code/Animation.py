@@ -11,7 +11,7 @@ from in_out_class import read
 ##############################################################################
 ############################     Parameters     ##############################
 ##############################################################################
-input_folder = 'Input_template/'
+input_folder = 'Crossroad/'
 input_files_name_test = [input_folder+'parameter_template.txt',\
                           input_folder+'walls_positions_template.txt',\
                           input_folder+'group_template.txt' ]

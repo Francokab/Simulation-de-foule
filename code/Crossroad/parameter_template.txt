@@ -1,6 +1,6 @@
 ## Crowd simulation parameters used by the solver ##
 
-1	# 1 for Karamouzas Model and 0 for Helbing-Johnson Model
+0	# 1 for Karamouzas Model and 0 for Helbing-Johnson Model
 0.3	# Mean radius of the agents
 1.3	# Mean Velocity of the agents
 0.05	# Standard deviation between agents

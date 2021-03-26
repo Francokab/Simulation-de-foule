@@ -28,7 +28,12 @@ class output :
                               +str(agent_velocity[0])+'\t'\
                               +str(agent_velocity[1])+'\n' )
         output_file.close()
-
+        return None
+    
+    def scalar_output(Velocity,Density,scalar_output_name):
+        output_file = open(scalar_output_name,'a')
+        output_file.write(str(Velocity)+'\t'+str(Density)+'\n')
+        output_file.close()
         return None
 
 class read :
