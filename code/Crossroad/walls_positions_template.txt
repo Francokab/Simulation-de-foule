@@ -1,0 +1,20 @@
+## Positions of the falls ##
+#
+#####
+#  Format :	-->		x1,y1 x2,y2
+#  Example :		:	
+#	A---B		:	Xa,Ya Xb,Yb
+#	|  /		:	Xa,Ya Xc,Yc
+#	| /		:
+#	C		:	
+####
+#
+# Walls positions :
+0,0 4,0
+4,0 4,4
+8,4 8,0
+8,0 12,0
+12,-4 8,-4
+8,-4 8,-8
+4,-8 4,-4
+4,-4 0,-4

@@ -8,7 +8,7 @@ import Animation as Anim
 ##############################################################################
 ############################     Parameters     ##############################
 ##############################################################################
-input_folder = 'Input_template/'
+input_folder = 'Crossroad/'
 input_files_name_test = [input_folder+'parameter_template.txt',\
                           input_folder+'walls_positions_template.txt',\
                           input_folder+'group_template.txt']
@@ -79,13 +79,16 @@ def direction_Force(V_max_agent,agent_position,agent_velocity,goal) :
     F_dir = ( e_direction*V_max_agent-agent_velocity)/relaxation_time    
     return  F_dir
 
-def agent_repulsion_Force(pos_agent_i,pos_agent_j,velocity_agent_j,t_step):
-    v_b = norm(velocity_agent_j)
-    e_j = vect(pos_agent_i,pos_agent_j)/dist_point(pos_agent_i,pos_agent_j)
-    b = 0.5 * sqrt( (dist_point(pos_agent_i,pos_agent_j) \
-             + norm(pos_agent_j-pos_agent_i - v_b*t_step*e_j)   )**2 \
-             - (v_b*t_step)**2)
-    return -2.1*exp(-b/0.3)*e_j # Model from Helbing & Molnar 1998
+def agent_repulsion_Force(pos_agent_i,pos_agent_j,velocity_agent_i, \
+                          velocity_agent_j,t_step):
+    # From Helbing 2013
+    Y_ab = (array(velocity_agent_j)-array(velocity_agent_j) )*t_step
+    #e_j = vect(pos_agent_i,pos_agent_j)/dist_point(pos_agent_i,pos_agent_j)
+    d_ab = array(pos_agent_j)-array(pos_agent_i)
+    b = 0.5 * sqrt( ( norm(d_ab)+norm(d_ab+Y_ab)  )**2 - norm(Y_ab)**2 )
+  
+    return -2.1*exp(-b/0.3)* ((norm(d_ab)+norm(Y_ab))/2*b) \
+        *0.5* (d_ab/norm(d_ab) + (d_ab+Y_ab)/norm(d_ab+Y_ab) )
 
 def wall_repulsion_Force(pos_agent,wall):
     w_p = closest_point_seg(wall[0], wall[1], pos_agent)
@@ -189,6 +192,7 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
     ## Begin simulation
     time_step_counter=0
     while abs(sum(Checkpoints))!=len(Checkpoints.flatten()) :
+        print(str(time_step_counter) + "/" + str(max_it))
      ## Whilee all the agents havent reach all their goals
         time_step_counter+=1
         if max_it > 0 : 
@@ -219,6 +223,7 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
                             prefactor=angular_dependence(Position[i],Position[j],Velocity[i])
                             F_agents+=prefactor*agent_repulsion_Force(Position[i],\
                                                                         Position[j],\
+                                                                        Velocity[i],\
                                                                         Velocity[j],\
                                                                         t_step    )
                       elif force_law==1: #"force_power_law":
