@@ -16,6 +16,7 @@ input_files_name_test = [input_folder+'parameter_template.txt',\
                           input_folder+'walls_positions_template.txt',\
                           input_folder+'group_template.txt' ]
 output_file_name_test = input_folder+'case_output.txt'
+scalar_output_name_test = input_folder+'scalar_output.txt'
 
 default_save_name = input_folder+'anim_test.gif'
 
@@ -50,7 +51,16 @@ def load_output(output_file_name = output_file_name_test):
     
     return dt, Positions, Velocities
 
+def load_output_scalar(scalar_output_name = scalar_output_name_test):
+    file = open(scalar_output_name, 'r')
+    Velocity = []
+    Density = []
+    for line in file.readlines():
+        line = line.strip('\n').split('\t')
+        Velocity.append(float(line[0]))
+        Density.append(float(line[1]))
 
+    return (Velocity,Density)
 
 ##############################################################################
 #                                                                            #  
@@ -60,9 +70,7 @@ def load_output(output_file_name = output_file_name_test):
 #                                                                            #
 ##############################################################################
 
-def create_animation(save_name = default_save_name ,
-                    input_files_name = input_files_name_test,
-                    output_file_name = output_file_name_test):
+def create_animation(save_name = default_save_name ,input_files_name = input_files_name_test,output_file_name = output_file_name_test):
     
     # Get useful values :
     Walls = read.read_walls_positions(input_files_name[1])
@@ -151,3 +159,10 @@ def create_animation(save_name = default_save_name ,
     anim.save(save_name, writer='Pillow')
     
     return None
+
+def plot_density(scalar_output_name = scalar_output_name_test):
+    Velocity,Density = load_output_scalar(scalar_output_name)
+    plt.plot(Density,Velocity, ':')
+    plt.show()
+
+plot_density()
