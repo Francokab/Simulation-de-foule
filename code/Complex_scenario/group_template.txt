@@ -1,0 +1,25 @@
+# First we have the list of goals
+# There are two types of goals :
+# 	- Points	formart : xg,yg
+#	- Segments	formart : xg1,yg1 xg2,yg2
+#
+# Then the list of random group of people and their goals
+# format : random
+# format : x1,y1 x2,y2 N g1,g2,g3
+# x1,y1 and x2,y2 are the position of the corners of box in wich the group appear
+# N is the number of people tha appear in the box
+# g1,g2,g3 are indices corresponding to the list of goals
+#
+# Then the list of group of people placed manualy and their goals
+# format : manual
+# format : x,y g1,g2,g3 
+#
+0,0.8 0,-0.8
+-1,1 -1,-1
+-8,1 -10,-1
+-8,8 -10,10
+0,8 -2,10
+-2,13 0,15
+-11,14
+random 1
+1,4 9,-4 10 0,1,2,3,4,5,6

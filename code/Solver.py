@@ -308,8 +308,4 @@ def run_social_force(input_files_name = input_files_name_test,output_file_name =
                     time_step_counter+1,output_file_name)
     print('-- Simulation completed')
     return None
-
-run_social_force()
-Anim.load_output()
-Anim.create_animation()
     

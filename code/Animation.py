@@ -155,14 +155,20 @@ def create_animation(save_name = default_save_name ,input_files_name = input_fil
     
     anim = animation.FuncAnimation(fig, animate, N_frames-1, repeat=False,
                                    interval=interval_delay)
-    
+    #plt.show()
     anim.save(save_name, writer='Pillow')
     
     return None
 
 def plot_density(scalar_output_name = scalar_output_name_test):
     Velocity,Density = load_output_scalar(scalar_output_name)
+    plt.figure(1)
+    plt.plot(Velocity, label="Velocity")
+    plt.plot(Density, label="Density")
+    plt.legend()
+    plt.figure(2)
     plt.plot(Density,Velocity, ':')
+    plt.xlabel("Density")
+    plt.ylabel("Velocity")
+    plt.title("Velocity in function of Density in the intersection")
     plt.show()
-
-plot_density()
